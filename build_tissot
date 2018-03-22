@@ -1,18 +1,18 @@
 #!/bin/bash
 
 export ARCH=arm64
-export CROSS_COMPILE=aarch64-linux-android-
+export CROSS_COMPILE=aarch64-linux-gnu-
 export CCOMPILE=$CROSS_COMPILE
 
 #Change Toolchain GCC versions from here
 #But I personally prefer Google's x86_64-linux-android-4.9
-GCC_VERSION=4.9
+GCC_VERSION=7.2
 
-TC_PREFIX=aarch64-linux-android
+TC_PREFIX=aarch64-linux-gnu
 TOOLCHAIN=$TC_PREFIX-$GCC_VERSION
 CUR_DIR=$PWD
 
-toolchain_url="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9"
+toolchain_url="https://github.com/sayeed99/linaro-arm64-gcc-7.2 aarch64-linux-gnu-7.2"
 
 clear
 
@@ -108,7 +108,7 @@ clear
 echo "--------------------PACKING-------------------------"
 echo "Starting Packing To Recovery Flashable Zip"
 rm -rf out/modules/*
-find . -name '*.ko' -exec $TC/$TOOLCHAIN/bin/aarch64-linux-android-strip --strip-debug {} \;
+find . -name '*.ko' -exec $TC/$TOOLCHAIN/bin/aarch64-linux-gnu-strip --strip-debug {} \;
 #find . -name '*.ko' -exec ./scripts/sign-file sha256 ./signing_key.priv ./signing_key.x509 {} \;
 find . -name '*.ko' -exec cp {} out/modules/ \;
 cd out/
