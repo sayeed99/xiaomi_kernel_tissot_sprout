@@ -216,7 +216,7 @@ ssize_t dvb_ringbuffer_write_user(struct dvb_ringbuffer *rbuf,
 					const u8 __user *buf, size_t len)
 {
 	size_t todo = len;
-	size_t split;
+	size_t split;	
 	int status;
 
 	split = (rbuf->pwrite + len > rbuf->size) ?
@@ -235,6 +235,7 @@ ssize_t dvb_ringbuffer_write_user(struct dvb_ringbuffer *rbuf,
 		 */
 		smp_store_release(&rbuf->pwrite, 0);
 	}
+	
 	status = copy_from_user(rbuf->data+rbuf->pwrite, buf, todo);
 	if (status)
 		return len - todo;
