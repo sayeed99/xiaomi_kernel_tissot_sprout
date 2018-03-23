@@ -49,9 +49,13 @@
 #define FT_SUSPEND_LEVEL 1
 #endif
 
-#if defined(FOCALTECH_AUTO_UPGRADE)
+#undef FOCALTECH_AUTO_UPGRADE
+
 #define FTS_VENDOR_1	0x3b
 #define FTS_VENDOR_2	0x51
+
+#if defined(FOCALTECH_AUTO_UPGRADE)
+
 static unsigned char firmware_data_vendor1[] = {
 	#include "HQ_AL1512_C6_FT5435_Biel0x3b_Ver0a_20170119_app.i"
 };
@@ -4097,27 +4101,6 @@ INIT_WORK(&data->work_vr, ft5435_change_vr_switch);
 	ft5435_update_fw_vendor_id(data);
 	fts_fw_vendor_id = data->fw_vendor_id;
 	printk("upgrade,fts_fw_vendor_id=0x%02x\n",  data->fw_vendor_id);
-#if defined(FOCALTECH_AUTO_UPGRADE)
-	if ((fts_fw_vendor_id != FTS_VENDOR_1) && (fts_fw_vendor_id != FTS_VENDOR_2)) {
-		fts_fw_vendor_id = ft5435_fw_Vid_get_from_boot(client);
-		printk("get_Vid_from_boot, fw_vendor_id=0x%02x\n",  fts_fw_vendor_id);
-	}
-
-	mutex_lock(&data->input_dev->mutex);
-	if (!data->loading_fw) {
-		data->loading_fw = true;
-		if (fts_fw_vendor_id == FTS_VENDOR_1)
-			ft5435_fw_upgrade_by_array_data(&client->dev, firmware_data_vendor1, sizeof(firmware_data_vendor1), !data->pdata->no_force_update);
-		else if (fts_fw_vendor_id == FTS_VENDOR_2)
-			ft5435_fw_upgrade_by_array_data(&client->dev, firmware_data_vendor2, sizeof(firmware_data_vendor2), !data->pdata->no_force_update);
-		else
-			printk("[FTS] FW unmatched,stop upgrade\n");
-		data->loading_fw = false;
-	}
-	mutex_unlock(&data->input_dev->mutex);
-
-#endif
-
 	FT_STORE_TS_INFO(data->ts_info, data->family_id, data->pdata->name,
 			data->pdata->num_max_touches, data->pdata->group_id,
 			data->pdata->fw_vkey_support ? "yes" : "no",
